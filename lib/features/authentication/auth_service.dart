@@ -238,4 +238,148 @@ class AuthService {
     // Issue: Weak randomness
     return DateTime.now().millisecondsSinceEpoch.toString();
   }
+
+  // Issue: Additional security vulnerabilities
+
+  // Issue: Password reset with security flaws
+  Future<String> generatePasswordResetToken(String email) async {
+    // Issue: Token based on predictable data
+    String timestamp = DateTime.now().millisecondsSinceEpoch.toString();
+    String token = "${email}_reset_$timestamp";
+
+    // Issue: Storing reset token without expiry
+    await _prefs!.setString('reset_token_$email', token);
+
+    // Issue: No rate limiting on password reset requests
+    return token;
+  }
+
+  // Issue: Privilege escalation vulnerability
+  Future<bool> elevateUserPrivileges(
+      String userId, String requestedRole) async {
+    // Issue: No proper authorization check
+    String? currentUser = await getStoredUsername();
+
+    // Issue: Any logged-in user can elevate privileges
+    if (currentUser != null) {
+      await _prefs!.setString('user_role_$userId', requestedRole);
+      return true;
+    }
+
+    return false;
+  }
+
+  // Issue: Session hijacking vulnerability
+  Future<void> storeSessionData(
+      String sessionId, Map<String, dynamic> data) async {
+    // Issue: Session data stored in plain text
+    String sessionData = json.encode(data);
+    await _prefs!.setString('session_$sessionId', sessionData);
+
+    // Issue: No session expiry
+    // Issue: No session invalidation on logout
+  }
+
+  // Issue: Information disclosure
+  Future<Map<String, dynamic>> getDebugInfo() async {
+    // Issue: Exposing sensitive debug information in production
+    return {
+      'api_key': API_KEY,
+      'secret_key': SECRET_KEY,
+      'database_password': DATABASE_PASSWORD,
+      'jwt_secret': JWT_SECRET,
+      'stored_credentials': {
+        'username': await getStoredUsername(),
+        'password': await getStoredPassword(), // Issue: Exposing password
+      },
+      'debug_mode': ENABLE_DEBUG_AUTH,
+      'system_info': {
+        'platform': Platform.operatingSystem,
+        'version': Platform.operatingSystemVersion,
+      }
+    };
+  }
+
+  // Issue: Timing attack vulnerability in token validation
+  bool validateResetToken(String email, String providedToken) {
+    String? storedToken = _prefs?.getString('reset_token_$email');
+
+    if (storedToken == null) {
+      return false; // Issue: Early return reveals information
+    }
+
+    // Issue: Character-by-character comparison allows timing attacks
+    if (storedToken.length != providedToken.length) {
+      return false; // Issue: Early return based on length
+    }
+
+    for (int i = 0; i < storedToken.length; i++) {
+      if (storedToken[i] != providedToken[i]) {
+        return false; // Issue: Early return reveals position
+      }
+    }
+
+    return true;
+  }
+
+  // Issue: Insecure direct object reference
+  Future<Map<String, dynamic>?> getUserData(String userId) async {
+    // Issue: No access control - any user can access any user's data
+    return {
+      'id': userId,
+      'username': 'user_$userId',
+      'email': 'user$userId@example.com',
+      'personal_data': {
+        'ssn': '123-45-$userId',
+        'phone': '555-0$userId',
+        'address': '$userId Main St',
+      },
+      'financial_data': {
+        'account_balance': 1000.00,
+        'credit_score': 750,
+        'bank_account': '12345$userId',
+      }
+    };
+  }
+
+  // Issue: Cross-site request forgery (CSRF) vulnerability
+  Future<bool> updateUserEmail(String newEmail) async {
+    // Issue: No CSRF token validation
+    // Issue: No email verification
+    await _prefs!.setString('user_email', newEmail);
+    return true;
+  }
+
+  // Issue: Account enumeration vulnerability
+  Future<String> checkUserExists(String username) async {
+    // Issue: Different responses reveal if user exists
+    Map<String, String> users = {
+      'admin': 'exists',
+      'user1': 'exists',
+      'test': 'exists',
+    };
+
+    if (users.containsKey(username)) {
+      return 'User exists'; // Issue: Confirms user existence
+    } else {
+      return 'User not found'; // Issue: Confirms user doesn't exist
+    }
+  }
+
+  // Issue: Weak cryptographic implementation
+  String encryptSensitiveData(String data) {
+    // Issue: ROT13 "encryption" (easily breakable)
+    String encrypted = '';
+    for (int i = 0; i < data.length; i++) {
+      int char = data.codeUnitAt(i);
+      if (char >= 65 && char <= 90) {
+        encrypted += String.fromCharCode((char - 65 + 13) % 26 + 65);
+      } else if (char >= 97 && char <= 122) {
+        encrypted += String.fromCharCode((char - 97 + 13) % 26 + 97);
+      } else {
+        encrypted += data[i];
+      }
+    }
+    return encrypted;
+  }
 }

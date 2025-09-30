@@ -16,6 +16,24 @@ This Flutter Task Manager app contains **intentional issues** across multiple ca
 - **No SSL pinning** in network requests
 - **Debug authentication bypass** in production (line 43)
 - **Exposed sensitive data in logs** (line 33)
+- **Privilege escalation vulnerability** - any user can elevate privileges (line 258)
+- **Session hijacking** - session data stored in plain text (line 272)
+- **Information disclosure** - debug info exposes secrets (line 282)
+- **Timing attack vulnerability** in token validation (line 302)
+- **Insecure direct object reference** - no access control (line 324)
+- **Account enumeration vulnerability** (line 352)
+- **Weak encryption** using ROT13 (line 368)
+
+### Additional Security Issues (`lib/src/bad_code_examples/security_vulnerabilities.dart`)
+
+- **Command injection vulnerability** - direct execution of user input
+- **Path traversal vulnerability** - no path validation
+- **Insecure deserialization** - executing code from data
+- **XML External Entity (XXE)** vulnerability
+- **Cross-site scripting (XSS)** - no HTML sanitization
+- **Insecure file upload** - no validation, executes uploaded files
+- **Race condition** in security checks
+- **Weak cryptographic implementation** - XOR encryption
 
 ### Configuration (`pubspec.yaml`)
 
@@ -32,6 +50,23 @@ This Flutter Task Manager app contains **intentional issues** across multiple ca
 - **Silent data persistence failures** when storage is full (line 55)
 - **Runtime errors** from missing bounds checking (line 89)
 - **Poor error recovery** for malformed API responses (line 152)
+- **Incorrect date comparison** - future tasks marked as overdue (line 318)
+- **Data corruption** - duplicate tasks and ID collisions (line 327)
+- **Race conditions** in batch operations (line 357)
+- **Wrong statistics calculation** - double counting issues (line 371)
+
+### Additional Functional Bugs (`lib/src/bad_code_examples/functional_bugs.dart`)
+
+- **Off-by-one errors** in array bounds checking
+- **Infinite loop potential** when modifying collections during iteration
+- **Race conditions** in counter incrementation
+- **Integer overflow** without bounds checking
+- **Floating point precision** bugs in comparisons
+- **Logic errors** in date calculations
+- **Memory leaks** in event handling
+- **Deadlock potential** in concurrent operations
+- **Incorrect algorithm implementations**
+- **State corruption** in concurrent updates
 
 ### Authentication Flow (`lib/features/authentication/login_screen.dart`)
 
@@ -278,5 +313,46 @@ This codebase is designed to test AI code review tools across multiple dimension
 3. **Compare results** against this guide
 4. **Evaluate** the tool's effectiveness across different issue categories
 5. **Test** the tool's ability to prioritize and explain issues
+
+## 🆕 Additional Bug Categories
+
+### UI/UX Bugs (`lib/src/bad_code_examples/ui_ux_bugs.dart`)
+
+- **Fixed width components** not responsive to screen size
+- **Poor form validation** with confusing error messages
+- **Buttons with inadequate touch targets** (< 48dp)
+- **Destructive actions without confirmation** dialogs
+- **Loading states without user feedback**
+- **Navigation without proper error handling**
+- **State management bugs** causing UI inconsistencies
+- **Poor color choices** affecting usability
+- **Orientation issues** with fixed heights
+- **Missing back button** handling
+
+### Functional Bugs (`lib/src/bad_code_examples/functional_bugs.dart`)
+
+- **Off-by-one errors** in array bounds checking
+- **Infinite loop potential** when modifying collections during iteration
+- **Race conditions** in counter incrementation
+- **Integer overflow** without bounds checking
+- **Floating point precision** bugs in comparisons
+- **Logic errors** in date calculations
+- **Memory leaks** in event handling
+- **Deadlock potential** in concurrent operations
+- **Incorrect algorithm implementations**
+- **State corruption** in concurrent updates
+
+### Security Vulnerabilities (`lib/src/bad_code_examples/security_vulnerabilities.dart`)
+
+- **Command injection vulnerability** - direct execution of user input
+- **Path traversal vulnerability** - no path validation
+- **Insecure deserialization** - executing code from data
+- **XML External Entity (XXE)** vulnerability
+- **Cross-site scripting (XSS)** - no HTML sanitization
+- **Insecure file upload** - no validation, executes uploaded files
+- **Race condition** in security checks
+- **Weak cryptographic implementation** - XOR encryption
+- **Session fixation** vulnerabilities
+- **Information disclosure** through debug endpoints
 
 This comprehensive testbed should provide excellent coverage for evaluating AI code review tools across all major dimensions of code quality assessment.

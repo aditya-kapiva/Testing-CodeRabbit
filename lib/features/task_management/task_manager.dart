@@ -305,4 +305,91 @@ class TaskManager {
     // Issue: Incomplete validation
     return task.title.isNotEmpty; // Missing other validations
   }
+  
+  // Issue: Additional functional bugs
+  
+  // Issue: Incorrect date comparison
+  List<Task> getOverdueTasks() {
+    List<Task> overdueTasks = [];
+    DateTime now = DateTime.now();
+    
+    for (Task task in _tasks) {
+      // Issue: Using >= instead of < for overdue check
+      if (task.dueDate != null && task.dueDate!.isAfter(now)) {
+        overdueTasks.add(task); // Issue: Adding future tasks as overdue
+      }
+    }
+    
+    return overdueTasks;
+  }
+  
+  // Issue: Data corruption bug
+  void mergeTasks(List<Task> newTasks) {
+    for (Task newTask in newTasks) {
+      // Issue: Not checking for existing tasks, creates duplicates
+      _tasks.add(newTask);
+      
+      // Issue: ID collision - multiple tasks can have same ID
+      if (newTask.id == null) {
+        newTask.id = _generateId(); // Issue: Modifying input parameter
+      }
+    }
+  }
+  
+  // Issue: Memory leak in filtering
+  List<Task> getTasksByTag(String tag) {
+    // Issue: Creating new list every time, never cleaned up
+    List<Task> filteredTasks = [];
+    
+    for (Task task in _tasks) {
+      // Issue: Case-sensitive tag matching
+      if (task.tags.contains(tag)) {
+        // Issue: Adding reference instead of copy, can cause mutations
+        filteredTasks.add(task);
+      }
+    }
+    
+    // Issue: No limit on returned results
+    return filteredTasks;
+  }
+  
+  // Issue: Race condition in batch operations
+  Future<void> batchDeleteTasks(List<int> taskIds) async {
+    for (int id in taskIds) {
+      // Issue: Not using atomic operations
+      await Future.delayed(Duration(milliseconds: 10)); // Simulate async work
+      
+      // Issue: Task might be deleted by another operation during delay
+      _tasks.removeWhere((task) => task.id == id);
+    }
+    
+    // Issue: Save after each deletion instead of batch save
+    await _saveTasks();
+  }
+  
+  // Issue: Incorrect statistics calculation
+  Map<String, int> getTaskStatistics() {
+    int completed = 0;
+    int pending = 0;
+    int overdue = 0;
+    
+    for (Task task in _tasks) {
+      if (task.completed) {
+        completed++;
+      } else {
+        pending++;
+        
+        // Issue: Wrong overdue calculation
+        if (task.dueDate != null && task.dueDate!.isBefore(DateTime.now())) {
+          overdue++; // Issue: Counting both as pending AND overdue
+        }
+      }
+    }
+    
+    return {
+      'completed': completed,
+      'pending': pending,
+      'overdue': overdue, // Issue: Total will be wrong due to double counting
+    };
+  }
 }
