@@ -1,0 +1,52 @@
+name: task_manager_app
+description: A Flutter Task Manager app with intentional issues for testing AI code review tools
+# TODO: Dependency issue - overly broad version range
+version: 1.0.0+1
+
+environment:
+  sdk: ">=2.19.0 <4.0.0" # Issue: Overly broad version range
+
+dependencies:
+  flutter:
+    sdk: flutter
+
+  # Security issue: Outdated packages with known vulnerabilities
+  http: ^0.13.0 # Outdated version
+  shared_preferences: ^2.0.0 # Outdated version
+  sqflite: ^2.2.0
+  path_provider: ^2.0.0
+  image_picker: ^0.8.0 # Outdated version
+
+  # Issue: Unused dependency
+  url_launcher: ^6.0.0
+
+  # Missing dependency issue - we'll use crypto but not declare it
+  cupertino_icons: ^1.0.2
+
+  # Performance issue: Heavy dependencies
+  flutter_svg: ^2.0.0
+  cached_network_image: ^3.2.0
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  integration_test:
+    sdk: flutter
+  flutter_lints: ^2.0.0
+
+  # Issue: Missing test dependencies we actually need
+  # mockito: ^5.0.0  # Commented out but needed
+
+# Asset management issues
+flutter:
+  uses-material-design: true
+
+  assets:
+    - assets/images/
+    - assets/missing_file.png # Issue: Missing asset
+    # Issue: Large uncompressed images will be added
+
+  fonts:
+    - family: CustomFont
+      fonts:
+        - asset: fonts/custom_font.ttf # Issue: Missing font file
